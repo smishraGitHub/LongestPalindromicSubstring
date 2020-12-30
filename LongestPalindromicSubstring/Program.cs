@@ -10,111 +10,42 @@ namespace LongestPalindromicSubstring
     {
         static void Main(string[] args)
         {
-            string s = "aacabdkacaa";
-            string s1 = "";
+            //string s = "aaaabbaa";
+            string s = "babad";
+            int n = s.Length;
+            bool[,] dp = new bool[n, n];
+            int i, j;
+            string res = "";
+            int len = 0;
 
-            //Reverse string
-            for(int i=s.Length-1;i>=0;i--)
+            for (int g = 0; g < n; g++)
             {
-                s1 = s1 + s[i];
+                for (i = 0, j = g; j < n; i++, j++)
+                {
+                    if (g == 0)
+                    {
+                        dp[i, j] = true;
+                    }
+                    else if (g == 1)
+                    {
+                        if (s[i] == s[j]) dp[i, j] = true;
+                        else dp[i, j] = false;
+                    }
+                    else
+                    {
+                        if (s[i] == s[j] && dp[i + 1, j - 1] == true) dp[i, j] = true;
+                        else dp[i, j] = false;
+                    }
+
+                    if (dp[i, j])
+                    {
+                        len = g + 1;
+                        res = s.Substring(i, g + 1);
+                    }
+                }
             }
-
-            int[,] temp_table = LCS_table(s, s1, s.Length);
-
-            string Result = LongestPalindromicSubstring(s, s1, s.Length, temp_table);
-            Console.WriteLine("Longest Palindromic Substring "+Result);
+            Console.WriteLine(res);
             Console.ReadLine();
-
-        }
-
-        public static string LongestPalindromicSubstring(string x, string y, int m,int[,] temp)
-        {
-            string s = "";
-            int n = m;
-            Dictionary<string, int> ds = new Dictionary<string, int>();
-
-            while(m>0 && n>0)
-            {
-                if(x[m-1]==y[n-1])
-                {
-                    s = s + x[m - 1];
-                    m--;
-                    n--;
-                }
-                else
-                {
-                    if (s != "" && !ds.ContainsKey(s))
-                    {
-                        ds.Add(s, s.Length);
-                        s = "";
-                    }
-
-
-                    if (temp[m-1,n] >= temp[m,n-1])
-                    {
-                        m--;
-                    }
-                    else
-                    {
-                        n--;
-                    }
-                }
-
-                
-            }
-
-            //if (s != "" && !ds.ContainsKey(s))
-            //{
-            //    ds.Add(s, s.Length);
-            //    s = "";
-            //}
-
-            var max = ds.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-
-
-            //var myKey = ds.FirstOrDefault(x1 => x1.Value == max).Key;
-
-            //foreach(string item in ds.Keys)
-            //{
-            //    if(!Ispalindrom(item))
-            //}
-
-            return max;
-        }
-        //Check and Return if string is palindrome
-
-        
-        /////////////////
-        public static int[,] LCS_table(string x,string y,int m)
-        {
-            int[,] temp = new int[m + 1, m + 1];
-
-            for(int i=0;i<m+1;i++)
-            {
-                for(int j=0;j<m+1;j++)
-                {
-                    if (i == 0 || j == 0)
-                        temp[i, j] = 0;
-                }
-            }
-
-            for (int i = 1; i < m + 1; i++)
-            {
-                for (int j = 1; j < m + 1; j++)
-                {
-                    if (x[i - 1] == y[j - 1])
-                    {
-                        temp[i, j] = 1 + temp[i - 1, j - 1];
-                    }
-                    else
-                    {
-                        temp[i, j] = Math.Max(temp[i - 1, j], temp[i, j - 1]);
-                    }
-                }
-            }
-
-            return temp;
-
         }
     }
 }
